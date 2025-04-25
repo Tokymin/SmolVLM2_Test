@@ -7,6 +7,7 @@ model = AutoModelForImageTextToText.from_pretrained(
     torch_dtype=torch.bfloat16,
     device_map="cuda"
 )
+print(model)
 # 图像的
 conversation = [
     {

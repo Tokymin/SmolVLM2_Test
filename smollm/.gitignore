@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+SmolVLM2-2.2B-Instruct-video-feedback/
 # Distribution / packaging
 .Python
 build/
