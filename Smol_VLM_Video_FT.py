@@ -1,6 +1,7 @@
 # 此Python文件用于对SmolVLM2进行视频字幕任务的微调
 # 导入所需的库
 import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import torch
 from peft import LoraConfig, prepare_model_for_kbit_training, get_peft_model
@@ -8,14 +9,22 @@ from transformers import AutoProcessor, BitsAndBytesConfig, AutoModelForImageTex
 from datasets import load_dataset
 from transformers import TrainingArguments, Trainer
 from torch.nn.utils.rnn import pad_sequence
-
-
+from huggingface_hub import login
+from transformers import Trainer, TrainingArguments
 # 设置是否使用LoRA和QLoRA以及选择模型
 # 设置SOCKS代理
 os.environ['http_proxy'] = 'http://127.0.0.1:1080'
 os.environ['https_proxy'] = 'socks5://127.0.0.1:1080'
 os.environ['socks_proxy'] = 'socks5://127.0.0.1:1080'
+# os.environ["HF_ENDPOINT"] = "https://alpha.hf-mirror.com"
+# os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
 
+
+# 你的访问令牌
+token = ""
+
+# 进行登录操作
+login(token=token)
 USE_LORA = False
 USE_QLORA = False
 SMOL = False
@@ -75,7 +84,8 @@ print(f"The model as is is holding: {peak_mem / 1024 ** 3:.2f} of GPU RAM")
 
 # 加载并预处理数据集
 """使用load_dataset加载数据集，将训练集按 0.5 的比例划分为训练集和测试集，"""
-ds = load_dataset("/mnt/share/toky/Datasets/TIGER-Lab/VideoFeedback", name='real')
+# /mnt/share/toky/Datasets/Toky_Generate/Cholec80VideoFeedback——/mnt/share/toky/Datasets/TIGER-Lab/VideoFeedback
+ds = load_dataset("/mnt/share/toky/Datasets/Toky_Generate/Cholec80VideoFeedback", name="real")
 split_ds = ds["train"].train_test_split(test_size=0.5)
 train_ds = split_ds["train"]
 del split_ds, ds
@@ -177,7 +187,7 @@ training_args = TrainingArguments(
     save_strategy="steps",
     save_steps=250,
     save_total_limit=1,
-    optim="paged_adamw_8bit", # for 8-bit, keep paged_adamw_8bit, else adamw_hf
+    optim="paged_adamw_8bit",  # for 8-bit, keep paged_adamw_8bit, else adamw_hf
     bf16=True,
     output_dir=f"./{model_name}-video-feedback",
     hub_model_id=f"{model_name}-video-feedback",
@@ -193,10 +203,13 @@ trainer = Trainer(
     data_collator=collate_fn,
     train_dataset=train_ds,
 )
+print("开始训练")
 trainer.train()
 # 将训练好的模型推送到Hugging Face Hub
-trainer.push_to_hub()
+print("将训练好的模型推送到Hugging Face Hub")
 
+trainer.push_to_hub()
+print("开始测试")
 # 测试示例
 messages = [{"role": "user",
              "content": [{"type": "text", "text": "Caption the video."},
