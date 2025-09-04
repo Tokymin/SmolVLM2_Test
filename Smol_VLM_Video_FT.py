@@ -11,6 +11,7 @@ from transformers import TrainingArguments, Trainer
 from torch.nn.utils.rnn import pad_sequence
 from huggingface_hub import login
 from transformers import Trainer, TrainingArguments
+
 # 设置是否使用LoRA和QLoRA以及选择模型
 # 设置SOCKS代理
 os.environ['http_proxy'] = 'http://127.0.0.1:1080'
@@ -24,7 +25,7 @@ os.environ['socks_proxy'] = 'socks5://127.0.0.1:1080'
 token = ""
 
 # 进行登录操作
-login(token=token)
+# login(token=token)
 USE_LORA = False
 USE_QLORA = False
 SMOL = False
@@ -55,7 +56,7 @@ if USE_QLORA or USE_LORA:
             bnb_4bit_quant_type="nf4",
             bnb_4bit_compute_dtype=torch.bfloat16
         )
-
+    print("yes AutoModelForImageTextToText")
     model = AutoModelForImageTextToText.from_pretrained(
         model_id,
         quantization_config=bnb_config if USE_QLORA else None,
@@ -68,6 +69,7 @@ if USE_QLORA or USE_LORA:
     model = get_peft_model(model, lora_config)
     print(model.get_nb_trainable_parameters())
 else:
+    print("yes AutoModelForImageTextToText")
     model = AutoModelForImageTextToText.from_pretrained(
         model_id,
         torch_dtype=torch.bfloat16,
@@ -104,15 +106,12 @@ def collate_fn(examples):
     instances = []
     for example in examples:
         prompt = example["text prompt"]
-
         user_content = [{"type": "text", "text": "Caption the video."}]
         user_content.append({"type": "video", "path": example["video link"]})
-
         messages = [
             {"role": "user", "content": user_content},
             {"role": "assistant", "content": [{"type": "text", "text": f"{prompt}"}]}
         ]
-
         instance = processor.apply_chat_template(messages, add_generation_prompt=False,
                                                  tokenize=True, return_dict=True, return_tensors="pt").to(
             "cuda").to(
@@ -206,23 +205,12 @@ trainer = Trainer(
 print("开始训练")
 trainer.train()
 # 将训练好的模型推送到Hugging Face Hub
-print("将训练好的模型推送到Hugging Face Hub")
+# print("将训练好的模型推送到Hugging Face Hub")
+# trainer.push_to_hub()
 
-trainer.push_to_hub()
-print("开始测试")
-# 测试示例
-messages = [{"role": "user",
-             "content": [{"type": "text", "text": "Caption the video."},
-                         {"type": "video",
-                          "path": "https://huggingface.co/datasets/hexuan21/VideoFeedback-videos-mp4/resolve/main/p/p000304.mp4"}]}]
-
-inputs = processor.apply_chat_template(messages, add_generation_prompt=True,
-                                       tokenize=True, return_dict=True, return_tensors="pt").to("cuda").to(model.dtype)
-
-generated_ids = model.generate(**inputs, do_sample=False, max_new_tokens=64)
-generated_texts = processor.batch_decode(
-    generated_ids,
-    skip_special_tokens=True,
-)
-
-print(generated_texts[0])
+save_directory = "/mnt/share/toky/LLMs/Toky-Generate/SmolVLM2-2.2B-Instruct-video-feedback-Cholec80"
+print(f"将训练好的模型保存到本地: {save_directory}")
+# 保存模型到本地指定目录
+trainer.save_model(save_directory)
+processor.save_pretrained(save_directory)
+print("结束")

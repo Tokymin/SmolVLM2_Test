@@ -8,7 +8,7 @@ __pycache__/
 SmolVLM2-2.2B-Instruct-video-feedback/
 # Distribution / packaging
 .Python
-
+smolvlm2-lora-final/
 build/
 develop-eggs/
 dist/

@@ -1,0 +1,47 @@
+{
+  "os":  "Linux-6.8.0-64-generic-x86_64-with-glibc2.35",
+  "python":  "CPython 3.10.4",
+  "startedAt":  "2025-09-03T02:44:06.979733Z",
+  "program":  "/media/user/data3/toky/Projects/SmolVLM2_Test/smolvlm_finetune.py",
+  "codePath":  "smolvlm_finetune.py",
+  "codePathLocal":  "smolvlm_finetune.py",
+  "git":  {
+    "remote":  "https://github.com/Tokymin/SmolVLM2_Test.git",
+    "commit":  "e03838a6c364f133860f14ee05e7f91ae215c345"
+  },
+  "email":  "466350259@qq.com",
+  "root":  "/media/user/data3/toky/Projects/SmolVLM2_Test",
+  "host":  "user-Rack-Server",
+  "executable":  "/media/user/data3/toky/CondaEnvs/SmolVLM/bin/python",
+  "cpu_count":  256,
+  "cpu_count_logical":  512,
+  "gpu":  "NVIDIA H100 PCIe",
+  "gpu_count":  2,
+  "disk":  {
+    "/":  {
+      "total":  "7619239378944",
+      "used":  "265583656960"
+    }
+  },
+  "memory":  {
+    "total":  "1622799351808"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA H100 PCIe",
+      "memoryTotal":  "85520809984",
+      "cudaCores":  14592,
+      "architecture":  "Hopper",
+      "uuid":  "GPU-fb93aeef-0f9d-c01d-bda9-0fe372e70c3e"
+    },
+    {
+      "name":  "NVIDIA H100 PCIe",
+      "memoryTotal":  "85520809984",
+      "cudaCores":  14592,
+      "architecture":  "Hopper",
+      "uuid":  "GPU-e0c24449-5d9a-845e-e0d5-a17721693448"
+    }
+  ],
+  "cudaVersion":  "12.9",
+  "writerId":  "zke1ikq8mcy97skx8uqy3dxfs6326g3l"
+}
