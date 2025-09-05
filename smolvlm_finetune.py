@@ -30,7 +30,7 @@ dtype = check_dependencies()
 
 # 关键路径
 model_id = "/mnt/share/HuggingfaceModels/HuggingFaceTB/SmolVLM2-2.2B-Instruct"
-train_data_path = "/media/user/data3/toky/Projects/Evaluate-Surgery-VLM/split_data/train_small.json"
+train_data_path = "/media/user/data3/toky/Projects/Evaluate-Surgery-VLM/split_data/train.json"
 IMAGE_FIELD = "frame_path"
 
 # -------------------------- 2. 加载模型与处理器 --------------------------
